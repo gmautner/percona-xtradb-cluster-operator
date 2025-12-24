@@ -131,7 +131,7 @@ func setS3Config(req *xbscapi.CreateBackupRequest) {
 		EndpointUrl:  os.Getenv("ENDPOINT"),
 		AccessKey:    os.Getenv("ACCESS_KEY_ID"),
 		SecretKey:    os.Getenv("SECRET_ACCESS_KEY"),
-		SessionToken: os.Getenv("SESSION_TOKEN"),
+		SessionToken: os.Getenv("S3_SESSION_TOKEN"),
 		StorageClass: os.Getenv("S3_STORAGE_CLASS"),
 	}
 }

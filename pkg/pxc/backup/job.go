@@ -323,7 +323,7 @@ func SetStorageS3(ctx context.Context, job *batchv1.JobSpec, cr *api.PerconaXtra
 			},
 		}
 		sessionToken := corev1.EnvVar{
-			Name: "SESSION_TOKEN",
+			Name: "S3_SESSION_TOKEN",
 			ValueFrom: &corev1.EnvVarSource{
 				SecretKeyRef: app.SecretKeySelectorWithOptional(s3.CredentialsSecret, "AWS_SESSION_TOKEN", true),
 			},
