@@ -35,5 +35,8 @@ s3_add_bucket_dest() {
 		aws configure set aws_access_key_id "$ACCESS_KEY_ID"
 		aws configure set aws_secret_access_key "$SECRET_ACCESS_KEY"
 	fi
+	if [ -n "$SESSION_TOKEN" ]; then
+		aws configure set aws_session_token "$SESSION_TOKEN"
+	fi
 	set -x
 }
