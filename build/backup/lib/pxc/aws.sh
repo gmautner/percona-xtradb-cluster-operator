@@ -35,13 +35,10 @@ s3_add_bucket_dest() {
 		# Set credentials in AWS credentials file (for AWS CLI)
 		aws configure set aws_access_key_id "$ACCESS_KEY_ID"
 		aws configure set aws_secret_access_key "$SECRET_ACCESS_KEY"
-		# Also export standard AWS env vars (for xbcloud and other tools)
-		export AWS_ACCESS_KEY_ID="$ACCESS_KEY_ID"
-		export AWS_SECRET_ACCESS_KEY="$SECRET_ACCESS_KEY"
 	fi
-	if [ -n "$SESSION_TOKEN" ]; then
-		aws configure set aws_session_token "$SESSION_TOKEN"
-		export AWS_SESSION_TOKEN="$SESSION_TOKEN"
+	if [ -n "$S3_SESSION_TOKEN" ]; then
+		# Set session token for AWS CLI (credentials file)
+		aws configure set aws_session_token "$S3_SESSION_TOKEN"
 	fi
 	set -x
 }
