@@ -53,7 +53,7 @@ spec:
         AWS_ACCESS_KEY_ID: '{{ .AWS_ACCESS_KEY_ID }}'
         AWS_SECRET_ACCESS_KEY: '{{ .AWS_SECRET_ACCESS_KEY }}'
         AWS_SESSION_TOKEN: '{{ .AWS_SESSION_TOKEN }}'
-        RESTIC_PASSWORD: 6mFIyMS6jthReTMX09nL
+        RESTIC_PASSWORD: '<replace with restic password>'
       engineVersion: v2
       mergePolicy: Replace
 
