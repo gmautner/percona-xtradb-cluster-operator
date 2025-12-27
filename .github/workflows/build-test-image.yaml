@@ -39,6 +39,6 @@ jobs:
           file: ./build/Dockerfile
           push: true
           platforms: linux/amd64
-          tags: ghcr.io/${{ github.repository_owner }}/pxc-operator:K8SPS-632-test
+          tags: ghcr.io/${{ github.repository_owner }}/pxc-operator:K8SPXC-1774-test
           provenance: false
           sbom: false
