@@ -3,7 +3,7 @@ name: Build Test Image
 on:
   push:
     branches:
-      - K8SPS-632-build-image
+      - build-image
   workflow_dispatch:
 
 env:
