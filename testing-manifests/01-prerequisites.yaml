@@ -1,0 +1,59 @@
+# Prerequisites for testing - ServiceAccount and External Secrets for session token credentials
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: portal-blueprint-backup-sa
+  namespace: portal
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: portal-blueprint-backup-sa-token
+  namespace: portal
+  annotations:
+    kubernetes.io/service-account.name: portal-blueprint-backup-sa
+type: kubernetes.io/service-account-token
+---
+apiVersion: generators.external-secrets.io/v1alpha1
+kind: Webhook
+metadata:
+  name: portal-blueprint-backup-creds-webhook
+  namespace: portal
+spec:
+  headers:
+    Authorization: Bearer {{ .auth.token }}
+    Content-Type: application/json
+  method: POST
+  result:
+    jsonPath: $
+  secrets:
+  - name: auth
+    secretRef:
+      name: portal-blueprint-backup-sa-token
+  url: http://tvm-backup-creds.token-vending-machine/credentials
+---
+apiVersion: external-secrets.io/v1
+kind: ExternalSecret
+metadata:
+  name: portal-blueprint-backup-creds
+  namespace: portal
+spec:
+  dataFrom:
+  - sourceRef:
+      generatorRef:
+        apiVersion: generators.external-secrets.io/v1alpha1
+        kind: Webhook
+        name: portal-blueprint-backup-creds-webhook
+  refreshInterval: 6h0m0s
+  target:
+    name: portal-blueprint-backup-creds
+    template:
+      data:
+        AWS_ACCESS_KEY_ID: '{{ .AWS_ACCESS_KEY_ID }}'
+        AWS_SECRET_ACCESS_KEY: '{{ .AWS_SECRET_ACCESS_KEY }}'
+        AWS_SESSION_TOKEN: '{{ .AWS_SESSION_TOKEN }}'
+        RESTIC_PASSWORD: 6mFIyMS6jthReTMX09nL
+      engineVersion: v2
+      mergePolicy: Replace
+

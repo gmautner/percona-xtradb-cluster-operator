@@ -1,0 +1,75 @@
+# PXC cluster with session token credentials for S3 backup and PITR
+# Uses: portal-blueprint-backup-creds (with AWS_SESSION_TOKEN)
+# Bucket prefix: portal-clean
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: pxc-clean-secrets
+  namespace: portal
+type: Opaque
+stringData:
+  root: "rootpass123"
+  xtrabackup: "backuppass123"
+  monitor: "monitorpass123"
+  clustercheck: "clustercheckpass123"
+  operator: "operatorpass123"
+  replication: "replicationpass123"
+---
+apiVersion: pxc.percona.com/v1
+kind: PerconaXtraDBCluster
+metadata:
+  name: pxc-clean
+  namespace: portal
+spec:
+  crVersion: "1.18.0"
+  secretsName: pxc-clean-secrets
+  allowUnsafeConfigurations: true
+  
+  initContainer:
+    image: ghcr.io/gmautner/pxc-operator:K8SPS-632-test
+  
+  pxc:
+    size: 1
+    image: percona/percona-xtradb-cluster:8.0.36-28.1
+    resources:
+      requests:
+        memory: 512M
+        cpu: 300m
+    volumeSpec:
+      persistentVolumeClaim:
+        resources:
+          requests:
+            storage: 2Gi
+
+  haproxy:
+    enabled: true
+    size: 1
+    image: percona/haproxy:2.8.5
+    resources:
+      requests:
+        memory: 128M
+        cpu: 100m
+
+  backup:
+    image: percona/percona-xtrabackup:8.0.35-34.1
+    pitr:
+      enabled: true
+      storageName: s3-pitr
+      timeBetweenUploads: 60
+    storages:
+      s3-backup:
+        type: s3
+        verifyTLS: true
+        s3:
+          bucket: lwsa-idp-testbed-dev-backup-eks-06-ttzun9n9/pxc/portal-clean/backup
+          credentialsSecret: portal-blueprint-backup-creds
+          region: us-east-2
+      s3-pitr:
+        type: s3
+        verifyTLS: true
+        s3:
+          bucket: lwsa-idp-testbed-dev-backup-eks-06-ttzun9n9/pxc/portal-clean/pitr
+          credentialsSecret: portal-blueprint-backup-creds
+          region: us-east-2
+
